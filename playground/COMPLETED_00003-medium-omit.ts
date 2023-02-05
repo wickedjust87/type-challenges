@@ -28,10 +28,6 @@
   > View on GitHub: https://tsch.js.org/3
 */
 
-/* _____________ Your Code Here _____________ */
-
-type MyOmit<T, K> = any
-
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
 
@@ -43,18 +39,18 @@ type cases = [
 // @ts-expect-error
 type error = MyOmit<Todo, 'description' | 'invalid'>
 
-interface Todo {
+type Todo = {
   title: string
   description: string
   completed: boolean
 }
 
-interface Expected1 {
+type Expected1 = {
   title: string
   completed: boolean
 }
 
-interface Expected2 {
+type Expected2 = {
   title: string
 }
 
@@ -64,3 +60,15 @@ interface Expected2 {
   > View solutions: https://tsch.js.org/3/solutions
   > More Challenges: https://tsch.js.org
 */
+
+/* _____________ Your Code Here _____________ */
+
+type MyOmit<T extends {}, K extends keyof T> = {
+  [PropertyName in keyof T as PropertyName extends K ? never : PropertyName]: T[PropertyName];
+};
+
+type MyType1 = MyOmit<Todo, 'description'>;
+//   ^?
+
+type MyType1 = MyOmit<Todo, 'description' | 'completed'>;
+//   ^?
