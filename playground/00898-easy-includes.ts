@@ -47,18 +47,40 @@ type cases = [
 
 /* _____________ Your Code Here _____________ */
 
-type Includes<T extends readonly any[], U extends string | number | bigint | boolean | null | undefined> = {
-  [Index in keyof T as T[Index] extends U
-    ? Index extends string
-      ? `${U}` extends `${T[Index]}`
-        ? 0 // `${T[Index]}_${U}`
-        : never
-      : never
-    : never]: true;
-} extends { 0: true } ? true : false;
+// type Includes<T extends readonly any[], U extends string | number | bigint | boolean | null | undefined> = {
+//   [Index in keyof T as T[Index] extends U
+//     ? Index extends string
+//       ? `${U}` extends `${T[Index]}`
+//         ? 0 // `${T[Index]}_${U}`
+//         : never
+//       : never
+//     : never]: true;
+// } extends { 0: true } ? true : false;
+
+type First<T extends readonly any[]> = T extends { length: 0 } ? never : T[0];
+type ExcludeFirst<T extends readonly any[]> =
+  T extends { length: 0 }
+    ? T
+    : T extends [unknown, ...infer Rest]
+      ? Rest
+      : never;
+
+type Test = ExcludeFirst<['Kars', 'Esidisi', 'Wamuu', 'Santana']>
+//   ^?
+
+type Includes<T extends readonly any[], U> =
+  T extends { length: 0 }
+    ? false
+    : First<T> extends U
+      ? true
+      : Includes<ExcludeFirst<T>, U>
 
 type MyType1 = Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Kars'>;
+//   ^?
 type MyType2 = Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Dio'>;
+//   ^?
 type MyType3 = Includes<[true, 2, 3, 5, 6, 7], boolean>;
+//   ^?
 type MyType4 = Includes<[1 | 2], 1>; // not sure how to solve this case?
+//   ^?
 // not sure how to solve when T or U contain an object?
