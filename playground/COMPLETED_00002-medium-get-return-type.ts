@@ -54,6 +54,14 @@ const fn1 = (v: boolean, w: any) => v ? 1 : 2
 
 /* _____________ Your Code Here _____________ */
 
-type MyReturnType<T extends () => U> = T extends () => any ? U : never;
+type MyReturnType<T extends (v: boolean, w: any) => unknown> =
+  T extends (v: boolean, w: any) => infer U ? U : never;
 
-type MyType = MyReturnType<() => string>;
+type MyType1 = MyReturnType<() => string>;
+//   ^?
+
+type MyType2 = MyReturnType<typeof fn> // expects 1 | 2
+//   ^?
+
+type MyType2 = MyReturnType<typeof fn1> // expects 1 | 2
+//   ^?
